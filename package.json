@@ -1,0 +1,47 @@
+{
+  "name": "react-context-reducer",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "release": "./scripts/release.sh",
+    "prepublishOnly": "npm run build",
+    "build": "npm run build:dev && npm run build:prod",
+    "build:dev": "NODE_ENV=development rollup -c",
+    "build:prod": "NODE_ENV=production rollup -c",
+    "start": "NODE_ENV=development rollup -c -w"
+  },
+  "keywords": [],
+  "author": "sheaivey",
+  "license": "MIT",
+  "repository": "sheaivey/react-context-reducer",
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/preset-react": "^7.0.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.16.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-config-standard-react": "^7.0.2",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-node": "^9.0.1",
+    "eslint-plugin-promise": "^4.1.1",
+    "eslint-plugin-react": "^7.13.0",
+    "eslint-plugin-standard": "^4.0.0",
+    "prop-types": "^15.7.2",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "rollup": "^1.12.3",
+    "rollup-plugin-babel": "^4.3.2",
+    "rollup-plugin-commonjs": "^10.0.0",
+    "rollup-plugin-node-resolve": "^5.0.0",
+    "rollup-plugin-peer-deps-external": "^2.2.0",
+    "rollup-plugin-replace": "^2.0.0",
+    "rollup-plugin-uglify": "^6.0.2"
+  },
+  "peerDependencies": {
+    "prop-types": ">= 15.5.x",
+    "react": ">= 16.8.x",
+    "react-dom": ">= 16.8.x"
+  }
+}
