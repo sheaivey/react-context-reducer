@@ -7,7 +7,7 @@ const contextDecorator = (contextKey, Context, Provider, extra = {}) => {
     contextKey: contextKey,
     Context: Context,
     connect: (
-      mapStoreToProps = () => {},
+      mapContextToProps = () => ({}),
       options = {
         useMemo: true /* only re-renders if props have changed */
       }
@@ -17,7 +17,7 @@ const contextDecorator = (contextKey, Context, Provider, extra = {}) => {
         return props => {
           const value = decoratedContext.use();
           return (
-            <ConnectComponent {...mapStoreToProps(value, props)} />
+            <ConnectComponent {...props} {...mapContextToProps(value, props)} />
           );
         };
       };

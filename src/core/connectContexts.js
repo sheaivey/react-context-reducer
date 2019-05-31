@@ -4,8 +4,12 @@ import { msg } from '../utils/logging';
 
 const connectContexts = (
   contextKeys = [],
-  mapContextStoreToProps = () => ({})
+  mapContextToProps = () => ({}),
+  options = {
+    useMemo: true /* only re-renders if props have changed */
+  }
 ) => (WrappedComponent) => {
+  const ConnectComponent = options.useMemo ? React.memo((props) => <WrappedComponent {...props} />) : WrappedComponent;
   return props => {
     if (process.env.NODE_ENV !== 'production') {
       if (!Array.isArray(contextKeys)) {
@@ -21,8 +25,7 @@ const connectContexts = (
       stores.push(value);
     });
     return (
-      <WrappedComponent
-        {...mapContextStoreToProps(stores, props)}
+      <ConnectComponent {...props} {...mapContextToProps(stores, props)}
       />
     );
   };
