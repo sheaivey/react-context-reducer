@@ -1,8 +1,8 @@
 #!/bin/bash -e
 export RELEASE=1
 
-if ! [ -e scripts/release.sh ]; then
-  echo >&2 "Please run scripts/release.sh from the repo root"
+if ! [ -e scripts/release.npm.sh ]; then
+  echo >&2 "Please run scripts/release.npm.sh from the repo root"
   exit 1
 fi
 
@@ -16,11 +16,6 @@ read next_version
 
 #
 rm -R lib
-
-npm run build-storybook
-
-git add docs
-git commit -m "updating docs"
 
 npm version $next_version
 
