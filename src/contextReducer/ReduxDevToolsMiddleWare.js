@@ -19,7 +19,7 @@ export default (store, reducer, options = {}) => {
   if (window.__REDUX_DEVTOOLS_EXTENSION__) {
     const extension = window.__REDUX_DEVTOOLS_EXTENSION__.connect({ ...defaultConfig, ...options });
     extension.init(store.getState());
-    extension.subscribe((message, extra) => {
+    extension.subscribe((message) => {
       if (message.type === 'DISPATCH' && message.payload) {
         switch (message.payload.type) {
           case 'TOGGLE_ACTION':

@@ -11,11 +11,11 @@ const createContextReducer = (contextKey, reducer, middlewares = false) => {
   const WrappedContext = contextDecorator(
     contextKey,
     Context,
-    (props) => {},
+    () => {},
     {
       getInitialState: () => initialState,
       getState: () => initialState, // overloaded
-      dispatch: (action) => {
+      dispatch: () => {
         if (process.env.NODE_ENV !== 'production') {
           throw new Error(msg(`The contextKey "${contextKey}" has not been provided for consumption. Be sure to wrap your app with the HOC "withContextProviders()(App)" before trying to consume a context.`));
         }

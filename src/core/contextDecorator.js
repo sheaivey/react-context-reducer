@@ -1,9 +1,8 @@
 import React, { useContext } from 'react';
 import { msg } from '../utils/logging';
-import { getContext } from './core';
 
 const contextDecorator = (contextKey, Context, Provider, extra = {}) => {
-  return {
+  const decoratedContext = {
     ...extra,
     contextKey: contextKey,
     Context: Context,
@@ -11,7 +10,7 @@ const contextDecorator = (contextKey, Context, Provider, extra = {}) => {
       mapStoreToProps = () => {}
     ) => (WrappedComponent) => {
       return props => {
-        const value = getContext(contextKey).use();
+        const value = decoratedContext.use();
         return (
           <WrappedComponent
             {...mapStoreToProps(value, props)}
@@ -30,6 +29,7 @@ const contextDecorator = (contextKey, Context, Provider, extra = {}) => {
     },
     Provider: Provider
   };
+  return decoratedContext;
 };
 
 export default contextDecorator;
