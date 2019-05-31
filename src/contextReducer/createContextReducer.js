@@ -8,18 +8,22 @@ import reduxDevToolsMiddleware from './ReduxDevToolsMiddleWare';
 const createContextReducer = (contextKey, reducer, middlewares = false) => {
   const Context = createContext();
   const initialState = reducer(undefined, { type: '@@INIT' }); // returns initialState
+  const _private = {
+    state: initialState,
+    dispatch: () => {
+      if (process.env.NODE_ENV !== 'production') {
+        throw new Error(msg(`The contextKey "${contextKey}" has not been provided for consumption. Be sure to wrap your app with the HOC "withContextProviders()(App)" before trying to consume a context.`));
+      }
+    } // overloaded
+  };
   const WrappedContext = contextDecorator(
     contextKey,
     Context,
     () => {},
-    {
+    { // extra
       getInitialState: () => initialState,
-      getState: () => initialState, // overloaded
-      dispatch: () => {
-        if (process.env.NODE_ENV !== 'production') {
-          throw new Error(msg(`The contextKey "${contextKey}" has not been provided for consumption. Be sure to wrap your app with the HOC "withContextProviders()(App)" before trying to consume a context.`));
-        }
-      } // overloaded
+      getState: () => _private.state,
+      dispatch: (action) => _private.dispatch(action)
     }
   );
 
@@ -35,9 +39,10 @@ const createContextReducer = (contextKey, reducer, middlewares = false) => {
   );
 
   WrappedContext.Provider = (props) => { /* Provider HoC */
-    const value = useReducerStore(WrappedContext, enhancedReducer, initialState, middlewares);
+    const [state] = useReducerStore(_private, enhancedReducer, initialState, middlewares);
+    const enhancedValue = [state, WrappedContext.dispatch];
     return (
-      <Context.Provider value={value}>
+      <Context.Provider value={enhancedValue}>
         {props.children}
       </Context.Provider>
     );
@@ -50,7 +55,7 @@ const createContextReducer = (contextKey, reducer, middlewares = false) => {
 
 export default createContextReducer;
 
-const useReducerStore = (WrappedContext, reducer, initialState, middlewares) => {
+const useReducerStore = (_private, reducer, initialState, middlewares) => {
   // TODO: this function gets called over and over rebuilding middleware and updating .getState() .dispatch()
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -66,8 +71,8 @@ const useReducerStore = (WrappedContext, reducer, initialState, middlewares) => 
 
   const finalDispatch = (action) => enhancedDispatch(action);
   // experimental Reducer Store API
-  WrappedContext.getState = () => state;
-  WrappedContext.dispatch = (action) => enhancedDispatch(action);
+  _private.state = state;
+  _private.dispatch = finalDispatch;
   return [ state, finalDispatch ];
 };
 
