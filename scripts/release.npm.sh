@@ -15,7 +15,7 @@ read next_version
 #npm test
 
 #
-rm -R lib
+rm -R -f lib
 
 npm version $next_version
 
