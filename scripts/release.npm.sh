@@ -14,8 +14,13 @@ read next_version
 #coming soon
 #npm test
 
-#clean lib folder
+#
 rm -R lib
+
+npm run build-storybook
+
+git add docs
+git commit -m "updating docs"
 
 npm version $next_version
 
