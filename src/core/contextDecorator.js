@@ -7,15 +7,19 @@ const contextDecorator = (contextKey, Context, Provider, extra = {}) => {
     contextKey: contextKey,
     Context: Context,
     connect: (
-      mapStoreToProps = () => {}
-    ) => (WrappedComponent) => {
-      return props => {
-        const value = decoratedContext.use();
-        return (
-          <WrappedComponent
-            {...mapStoreToProps(value, props)}
-          />
-        );
+      mapStoreToProps = () => {},
+      options = {
+        useMemo: true /* only re-renders if props have changed */
+      }
+    ) => {
+      return (WrappedComponent) => {
+        const ConnectComponent = options.useMemo ? React.memo((props) => <WrappedComponent {...props} />) : WrappedComponent;
+        return props => {
+          const value = decoratedContext.use();
+          return (
+            <ConnectComponent {...mapStoreToProps(value, props)} />
+          );
+        };
       };
     },
     use: () => {
