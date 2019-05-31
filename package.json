@@ -3,8 +3,11 @@
   "version": "0.0.3",
   "description": "",
   "main": "index.js",
+  "files": ["lib"],
   "scripts": {
-    "release": "./scripts/release.sh",
+    "release": "npm run release:docs && npm run release:npm",
+    "release:npm": "./scripts/release.npm.sh",
+    "release:docs"
     "prepublishOnly": "npm run build",
     "build": "npm run build:dev && npm run build:prod",
     "build:dev": "NODE_ENV=development rollup -c",

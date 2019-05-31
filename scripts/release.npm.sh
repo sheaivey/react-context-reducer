@@ -17,11 +17,6 @@ read next_version
 #clean lib folder
 rm -R lib
 
-npm run build-storybook
-
-git add docs
-git commit -m "updating docs"
-
 npm version $next_version
 
 git push origin master
