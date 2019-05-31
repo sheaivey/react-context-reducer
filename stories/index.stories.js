@@ -3,7 +3,22 @@ import React from 'react';
 import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import { linkTo } from '@storybook/addon-links';
-import { createContextReducer, registerContext, withContextProviders } from 'react-context-reducer';
+import { createContextReducer, registerContext, withContextProviders, combineReducers } from 'react-context-reducer';
+
+const CombinedReducer = createContextReducer('CombinedReducer',
+  combineReducers({
+    store1: (state = 0, action) => {
+      if (action.type === 'store1/+') {
+        return ++state;
+      }
+      if (action.type === 'store1/-') {
+        return --state;
+      }
+      return state;
+    },
+    store2: (state = 0, action) => Math.random() // always updating
+  })
+);
 
 const RootReducer = createContextReducer('RootReducer', (state = 'react-context-reducer', action) => state);
 registerContext(RootReducer);
@@ -29,4 +44,24 @@ storiesOf('Consumers', module)
     <RootReducer.Provider>
       <Component />
     </RootReducer.Provider>
+  ));
+
+const CombinedComponent = CombinedReducer.connect(([state, dispatch]) => ({ store1: state.store1 }))(
+  (props) => {
+    console.log('render');
+    return (
+      <div>
+        {props.store1}
+        <button onClick={() => CombinedReducer.dispatch({ type: 'store1/+' })}>+</button>
+        <button onClick={() => CombinedReducer.dispatch({ type: 'store1/-' })}>-</button>
+        <button onClick={() => CombinedReducer.dispatch({ type: 'noop' })}>no-op</button>
+      </div>
+    );
+  }
+);
+storiesOf('combineReducers', module)
+  .add('CombinedReducer.connect()', () => (
+    <CombinedReducer.Provider>
+      <CombinedComponent />
+    </CombinedReducer.Provider>
   ));
