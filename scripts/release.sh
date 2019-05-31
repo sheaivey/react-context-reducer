@@ -13,6 +13,11 @@ read next_version
 
 #npm test
 
+npm run build-storybook
+
+git add docs
+git commit -m "updating docs"
+
 npm version $next_version
 
 git push origin master
