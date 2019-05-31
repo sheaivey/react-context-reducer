@@ -1,9 +1,11 @@
 {
   "name": "react-context-reducer",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "",
   "main": "index.js",
-  "files": ["lib"],
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "release": "npm run release:docs && npm run release:npm",
     "release:npm": "./scripts/release.npm.sh",
