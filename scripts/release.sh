@@ -11,7 +11,11 @@ current_version=$(node -p "require('./package').version")
 printf "Current version is $current_version\nNext Version: "
 read next_version
 
+#coming soon
 #npm test
+
+#clean lib folder
+rm -R lib
 
 npm run build-storybook
 

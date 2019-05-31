@@ -6,7 +6,7 @@ import { uglify } from 'rollup-plugin-uglify';
 import external from 'rollup-plugin-peer-deps-external';
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
-const outputFile = NODE_ENV === 'production' ? './lib/prod.js' : './lib/dev.js';
+const outputFile = NODE_ENV === 'production' ? './lib/react-context-reducer.prod.js' : './lib/react-context-reducer.dev.js';
 
 export default {
   input: './src/index.js',

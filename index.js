@@ -1,5 +1,5 @@
 if (process.env.NODE_ENV === 'production') {
-  module.exports = require('./lib/prod.js');
+  module.exports = require('./lib/react-context-reducer.prod.js');
 } else {
-  module.exports = require('./lib/dev.js');
+  module.exports = require('./lib/react-context-reducer.dev.js');
 }
