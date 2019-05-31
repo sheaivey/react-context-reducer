@@ -46,15 +46,18 @@ storiesOf('Consumers', module)
     </RootReducer.Provider>
   ));
 
-const CombinedComponent = CombinedReducer.connect(([state, dispatch]) => ({ store1: state.store1 }))(
+const CombinedComponent = CombinedReducer.connect(([state, dispatch]) => {
+  return { store1: state.store1, dispatch: dispatch };
+})(
   (props) => {
+    const { store1, dispatch } = props;
     console.log('render');
     return (
       <div>
-        {props.store1}
-        <button onClick={() => CombinedReducer.dispatch({ type: 'store1/+' })}>+</button>
-        <button onClick={() => CombinedReducer.dispatch({ type: 'store1/-' })}>-</button>
-        <button onClick={() => CombinedReducer.dispatch({ type: 'noop' })}>no-op</button>
+        {store1}
+        <button onClick={() => dispatch({ type: 'store1/+' })}>+</button>
+        <button onClick={() => dispatch({ type: 'store1/-' })}>-</button>
+        <button onClick={() => dispatch({ type: 'noop' })}>no-op</button>
       </div>
     );
   }
