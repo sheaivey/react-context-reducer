@@ -1,9 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { storiesOf } from '@storybook/react';
-import { action } from '@storybook/addon-actions';
+import { action as actionAddon, configureActions } from '@storybook/addon-actions';
 import { linkTo } from '@storybook/addon-links';
 import { createContextReducer, registerContext, withContextProviders, combineReducers } from 'react-context-reducer';
+
+const actionLogger = store => next => action => {
+  let result = next(action);
+  actionAddon('onClick');
+  console.group(action.type);
+  console.info('dispatching', action);
+  console.log('next state', store.getState());
+  console.groupEnd();
+  return result;
+};
 
 const CombinedReducer = createContextReducer('CombinedReducer',
   combineReducers({
@@ -17,10 +27,11 @@ const CombinedReducer = createContextReducer('CombinedReducer',
       return state;
     },
     store2: (state = 0, action) => Math.random() // always updating
-  })
+  }),
+  [actionLogger]
 );
 
-const RootReducer = createContextReducer('RootReducer', (state = 'react-context-reducer', action) => state);
+const RootReducer = createContextReducer('RootReducer', (state = 'react-context-reducer', action) => state, [actionLogger]);
 registerContext(RootReducer);
 
 storiesOf('Welcome', module).add('to Storybook', () => <div>
@@ -46,18 +57,23 @@ storiesOf('Consumers', module)
     </RootReducer.Provider>
   ));
 
+let renderCount = 0;
 const CombinedComponent = CombinedReducer.connect(([state, dispatch]) => {
   return { store1: state.store1, dispatch: dispatch };
 })(
   (props) => {
     const { store1, dispatch } = props;
     console.log('render');
+    useEffect(() => { renderCount = 0; }, []);
+    renderCount++;
     return (
       <div>
         {store1}
-        <button onClick={() => dispatch({ type: 'store1/+' })}>+</button>
+        <button onClick={() => { dispatch({ type: 'store1/+' }); actionAddon('onClick'); }}>+</button>
         <button onClick={() => dispatch({ type: 'store1/-' })}>-</button>
         <button onClick={() => dispatch({ type: 'noop' })}>no-op</button>
+        <br />
+        Render Count: {renderCount}
       </div>
     );
   }
