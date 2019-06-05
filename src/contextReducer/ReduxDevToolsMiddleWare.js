@@ -1,4 +1,4 @@
-const reduxDevToolsActions = {
+export const reduxDevToolsActions = {
   ReplaceState: '@@REPLACE_STATE'
 };
 

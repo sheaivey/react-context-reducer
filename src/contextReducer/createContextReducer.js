@@ -2,18 +2,19 @@ import React, { createContext, useReducer, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { msg } from '../utils/logging';
 
-import reduxDevToolsMiddleware from './ReduxDevToolsMiddleWare';
+import reduxDevToolsMiddleware, { reduxDevToolsActions } from './ReduxDevToolsMiddleWare';
 
 const createContextReducer = (contextKey, reducer, middlewares = false) => {
   const Context = createContext();
   const initialState = reducer(undefined, { type: '@@INIT' }); // returns initialState
   const _private = {
     state: initialState,
-    dispatch: () => { // will be overloaded once Provider is used.
+    dispatch: () => { // overloaded, enhancedDispatch (with middlewares).
       if (process.env.NODE_ENV !== 'production') {
         throw new Error(msg(`The contextKey "${contextKey}" has not been provided for consumption. Be sure to wrap your app with the HOC "withContextProviders()(App)" before trying to consume a context.`));
       }
-    }
+    },
+    _dispatch: () => {} // overloaded, raw dispatch (no middlewares).
   };
   const decoratedContext = {
     contextKey,
@@ -69,7 +70,7 @@ const createContextReducer = (contextKey, reducer, middlewares = false) => {
     enhancedReducer = reduxDevToolsMiddleware(
       {
         getState: decoratedContext.getState,
-        dispatch: (action) => decoratedContext.dispatch(action)
+        dispatch: (action) => _private._dispatch(action)
       },
       reducer,
       { // reduxDevTools options
@@ -110,6 +111,7 @@ const useReducerStore = (_private, reducer, initialState, middlewares) => {
   // experimental Reducer Store API
   _private.state = state;
   _private.dispatch = enhancedDispatch;
+  _private._dispatch = dispatch;
   return [ state, enhancedDispatch ];
 };
 
