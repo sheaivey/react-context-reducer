@@ -40,4 +40,5 @@ export default (store, reducer, options = {}) => {
       return nextState; // dont do anything
     };
   }
+  return reducer;
 };

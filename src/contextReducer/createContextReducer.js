@@ -2,7 +2,7 @@ import React, { createContext, useReducer, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { msg } from '../utils/logging';
 
-import reduxDevToolsMiddleware, { reduxDevToolsActions } from './ReduxDevToolsMiddleWare';
+import reduxDevToolsMiddleware from './ReduxDevToolsMiddleWare';
 
 const createContextReducer = (contextKey, reducer, middlewares = false) => {
   const Context = createContext();
@@ -47,7 +47,7 @@ const createContextReducer = (contextKey, reducer, middlewares = false) => {
         const state = value[0];
         if (process.env.NODE_ENV !== 'production') {
           if (typeof state !== 'object') {
-            throw new Error(msg(`The contextKey "${contextKey}" state is not a object.`), state);
+            return value; // can only filter object keys.
           }
           if (!Array.isArray(keys)) {
             throw new Error(msg(`Keys must be an array.`), state);

@@ -1,11 +1,8 @@
 import React, { useEffect } from 'react';
-
 import { storiesOf } from '@storybook/react';
-import { action as actionAddon, configureActions } from '@storybook/addon-actions';
+import { action as actionAddon } from '@storybook/addon-actions';
 // import { linkTo } from '@storybook/addon-links';
 import { createContextReducer, combineReducers, combineActions, dispatchLogger } from 'react-context-reducer';
-
-configureActions();
 
 const dispatchAction = (store) =>
   (next) =>
@@ -20,7 +17,7 @@ const dispatchAction = (store) =>
 
 const combinedActions = combineActions({
   store1: { Increment: 'store1/+', Decrement: 'store1/-' },
-  store2: { Noop: 'store2/noop', Decrement: 'store1/-' }
+  store2: { Noop: 'store2/noop' }
 });
 
 const CombinedReducer = createContextReducer('CombinedReducer',
