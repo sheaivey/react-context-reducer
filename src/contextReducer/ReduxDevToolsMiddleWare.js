@@ -40,9 +40,4 @@ export default (store, reducer, options = {}) => {
       return nextState; // dont do anything
     };
   }
-  return (state, action) => {
-    const nextState = reducer(state, action);
-    console.log(`Action Triggered: ${action.type} [${options.name || ''}]`, action);
-    return nextState;
-  };
 };

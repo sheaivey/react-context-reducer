@@ -1,14 +1,9 @@
 export {
-  contextDecorator,
-  registerContext,
-  getContext,
-  getContexts,
-  withContextProviders,
-  useContexts,
-  connectContexts
-} from './core';
+  createContextReducer,
+  combineReducers,
+  combineActions
+} from './contextReducer';
 
 export {
-  createContextReducer,
-  combineReducers
-} from './contextReducer';
+  dispatchLogger
+} from './middlewares';
