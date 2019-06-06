@@ -36,14 +36,17 @@ $ npm install prop-types
 ```
 
 ## Core API
-- `createContextReducer(ContextKey, reducer, middlewares)` - Creates a Context store object with the following properties.
+- `createContextReducer(ContextKey, reducer, middlewares)` - Creates a Context store object with the following properties:
 ```js
   {
     ContextKey: ContextKey, /* name of the store. */
     Context, /* React Context Object. */
     Provider, /* The Provider HoC. */
     use(), /* React Hook to use the store. returns [state, dispatch] */
-    connect(mapContextToProps, watchKeys), /* The Connect HoC - callback function to map [state, dispatch] to props. */
+    connect(mapContextToProps, watchKeys), /* The Connect HoC
+    - mapContextToProps() callback function to map [state, dispatch] to props.
+    - watchKeys (optional) array of keys to return from the state.
+    */
     getState(), /* Returns the current state of the store. */
     dispatch(action) /* Dispatch an action to your store. */
   }
@@ -73,7 +76,7 @@ The middleware api sits between every dispatch call to your store. This allows f
 ```
 
 ## Example
-First we need to create a data store using createContextReducer().
+First we need to create a context store using createContextReducer().
 
 ```js
 // ./AppStore.js
