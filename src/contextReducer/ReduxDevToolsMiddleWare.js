@@ -1,7 +1,7 @@
 export const reduxDevToolsActions = {
   ReplaceState: '@@REPLACE_STATE'
 };
-
+let recommended = false;
 const defaultConfig = {
   features: {
     dispatch: true,
@@ -16,7 +16,7 @@ const defaultConfig = {
 };
 
 export default (store, reducer, options = {}) => {
-  if (window.__REDUX_DEVTOOLS_EXTENSION__) {
+  if (window && window.__REDUX_DEVTOOLS_EXTENSION__) {
     const extension = window.__REDUX_DEVTOOLS_EXTENSION__.connect({ ...defaultConfig, ...options });
     extension.init(store.getState());
     extension.subscribe((message) => {
@@ -39,6 +39,12 @@ export default (store, reducer, options = {}) => {
       extension.send(action, nextState);
       return nextState; // dont do anything
     };
+  }
+  if (process.env.NODE_ENV !== 'production') {
+    if (!recommended && window && navigator && navigator.userAgent.indexOf('Chrome') > -1) {
+      recommended = true;
+      console.info('%cDownload the Redux DevTools for a better development experience: https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd', 'font-weight:bold');
+    }
   }
   return reducer;
 };
