@@ -1,7 +1,7 @@
 {
   "name": "react-context-reducer",
   "version": "1.0.0",
-  "description": "",
+  "description": "React Context + useReducer = Hooks version of Redux. This library is intended to be a light weight stand-in for Redux.js.",
   "main": "index.js",
   "files": [
     "lib"
@@ -18,7 +18,7 @@
     "storybook": "start-storybook -p 3000",
     "build-storybook": "build-storybook -c .storybook -o docs"
   },
-  "keywords": [],
+  "keywords": ["redux", "react", "store", "dispatch", "context", "hooks"],
   "author": "sheaivey",
   "license": "MIT",
   "repository": "sheaivey/react-context-reducer",
