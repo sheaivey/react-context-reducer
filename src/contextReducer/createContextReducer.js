@@ -103,7 +103,7 @@ const useReducerStore = (_private, reducer, initialState, middlewares) => {
   if (middlewares && Array.isArray(middlewares) && middlewares.length) {
     const middlewareAPI = {
       getState: () => state,
-      dispatch: action => dispatch(action)
+      dispatch: action => _private.dispatch(action)
     };
     const chain = middlewares.map(middleware => middleware(middlewareAPI));
     enhancedDispatch = compose(...chain)(dispatch);
