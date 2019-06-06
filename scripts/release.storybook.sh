@@ -6,6 +6,8 @@ if ! [ -e scripts/release.storybook.sh ]; then
   exit 1
 fi
 
+npm run test
+
 npm run build-storybook
 
 git add docs

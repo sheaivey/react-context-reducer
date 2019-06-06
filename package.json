@@ -1,7 +1,7 @@
 {
   "name": "react-context-reducer",
   "version": "1.0.0",
-  "description": "React Context + useReducer = Hooks version of Redux. This library is intended to be a light weight stand-in for Redux.js.",
+  "description": "React Context + useReducer = Hooks version of Redux. This library is intended to be a light weight stand-in for Redux.js built on top of reacts Hooks API.",
   "main": "index.js",
   "files": [
     "lib"
@@ -16,9 +16,18 @@
     "build:prod": "NODE_ENV=production rollup -c",
     "start": "npm run storybook",
     "storybook": "start-storybook -p 3000",
-    "build-storybook": "build-storybook -c .storybook -o docs"
+    "build-storybook": "build-storybook -c .storybook -o docs",
+    "lint": "eslint src",
+    "test": "npm run lint && mocha \"src/**/*.test.js\" --recursive --require @babel/register"
   },
-  "keywords": ["redux", "react", "store", "dispatch", "context", "hooks"],
+  "keywords": [
+    "redux",
+    "react",
+    "store",
+    "dispatch",
+    "context",
+    "hooks"
+  ],
   "author": "sheaivey",
   "license": "MIT",
   "repository": "sheaivey/react-context-reducer",
@@ -26,6 +35,7 @@
     "@babel/core": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
     "@babel/preset-react": "^7.0.0",
+    "@babel/register": "^7.4.4",
     "@storybook/addon-actions": "^5.0.11",
     "@storybook/addon-links": "^5.0.11",
     "@storybook/addons": "^5.0.11",
@@ -43,6 +53,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-test-renderer": "^16.8.6",
     "rollup": "^1.12.3",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^10.0.0",
@@ -56,5 +67,7 @@
     "react": ">= 16.8.x",
     "react-dom": ">= 16.8.x"
   },
-  "dependencies": {}
+  "dependencies": {
+    "mocha": "^6.1.4"
+  }
 }
