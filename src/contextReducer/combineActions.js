@@ -8,7 +8,8 @@ const combineReducers = (actions) => {
     const key = actionKeys[i];
     if (process.env.NODE_ENV !== 'production') {
       if (typeof actions[key] === 'undefined') {
-        warning(`No action provided for key "${key}"`);
+        warning(`No actions provided for key "${key}"`);
+        continue;
       }
     }
     if (typeof actions[key] === 'object') {
