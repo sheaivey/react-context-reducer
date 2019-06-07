@@ -124,7 +124,7 @@ const App = (props) => {
 };
 ```
 
-Connect our store to a sub component that needs access to the stores state and dispatch.
+Connect our store to a component that needs access to state and dispatch using the `AppStore.connect()` HoC.
 ```js
 // ./MyComponent.js
 import React from 'react';
@@ -141,13 +141,36 @@ const MyComponent = (props) => {
   )
 };
 
-export default AppStore.connect(([state, dispatch]) => {
+export default AppStore.connect(([state, dispatch]) => ({
+  // mapContextToProps
   state,
   dispatch
-})(MyComponent);
+}))(MyComponent);
 ```
 
-If everything was wired up correctly you should now see two buttons and a value. Each time a button is pressed you will also see the action being logged to the console because of our middleware.
+Alternatively you can use the `AppStore.use()` hook to also gain access to the stores state and dispatch.
+```js
+// ./MyComponent.js
+import React from 'react';
+import AppStore, {AppStoreActions} from './AppStore';
+
+const MyComponent = (props) => {
+  const [state, dispatch] = AppStore.use(); // hook
+  return (
+    <div>
+      <button onClick={() => dispatch({type: AppStoreActions.Add})}>Add</button>
+      <button onClick={() => dispatch({type: AppStoreActions.Subtract})}>Subtract</button>
+      {state}
+    </div>
+  )
+};
+
+export default MyComponent;
+```
+
+If everything was coded up correctly you should now see two buttons and the state value. Each time a button is pressed you will also see the action being logged to the console because of the `dispatchLogger` middleware.
+
+
 
 View Examples (Work In Progress)
 https://sheaivey.github.io/react-context-reducer/
