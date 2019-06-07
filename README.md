@@ -18,7 +18,7 @@ React Context + useReducer = Hooks version of Redux. This library is intended to
   - Fail fast with helpful debugging messages.
   - Integrated with `ReduxDevTools`.
 - Lightweight under 5kb in production
-- ***Special Note***: `getState()` and `dispatch()` can only be used after the context store has been provided. After being provided you can call `getState()` and `dispatch()` at any point.
+- ***Note***: `getState()` and `dispatch()` can only be used after the context store has been provided. After being provided you can call `getState()` and `dispatch()` at any point.
 
 ## Installing
 
@@ -43,9 +43,10 @@ $ npm install prop-types
     Context, /* React Context Object. */
     Provider, /* The Provider HoC. */
     use(), /* React Hook to use the store. returns [state, dispatch] */
-    connect(mapContextToProps, watchKeys), /* The Connect HoC
-    - mapContextToProps() callback function to map [state, dispatch] to props.
+    connect(mapContextToProps, watchKeys, options), /* The Connect HoC
+    - mapContextToProps(...) function to map context [state, dispatch] to props.
     - watchKeys (optional) array of keys to return from the state.
+    - options (optional) object {useMemo = true}
     */
     getState(), /* Returns the current state of the store. */
     dispatch(action) /* Dispatch an action to your store. */
@@ -78,7 +79,7 @@ The middleware api sits between every dispatch call to your store. This allows f
 ## Example
 First we need to create a context store using createContextReducer().
 
-```js
+```jsx
 // ./AppStore.js
 import { createContextReducer, dispatchLogger } from 'react-context-reducer';
 
@@ -109,7 +110,7 @@ export default createContextReducer(
 ```
 
 Now we can provide the context store to the app by wrapping it with `AppStore.Provider`.
-```js
+```jsx
 // ./app.js
 import React from 'react';
 import AppStore from './AppStore';
@@ -122,11 +123,13 @@ const App = (props) => {
     </AppStore.Provider>
   )
 };
+
+export default App;
 ```
 
 Connect our store to a component that needs access to state and dispatch using the `AppStore.connect()` HoC.
-```js
-// ./MyComponent.js
+```jsx
+// ./MyComponent.js - AppStore.connect() HoC
 import React from 'react';
 import AppStore, {AppStoreActions} from './AppStore';
 
@@ -149,8 +152,8 @@ export default AppStore.connect(([state, dispatch]) => ({
 ```
 
 Alternatively you can use the `AppStore.use()` hook to also gain access to the stores state and dispatch.
-```js
-// ./MyComponent.js
+```jsx
+// ./MyComponent.js - AppStore.use() hook
 import React from 'react';
 import AppStore, {AppStoreActions} from './AppStore';
 
