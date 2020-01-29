@@ -18,7 +18,6 @@ React Context + useReducer = Hooks version of Redux. This library is intended to
   - Fail fast with helpful debugging messages.
   - Integrated with `ReduxDevTools`.
 - Lightweight under 5kb in production
-- ***Note***: `getState()` and `dispatch()` can only be used after the context store has been provided. After being provided you can call `getState()` and `dispatch()` at any point.
 
 ## Installing
 
@@ -81,7 +80,7 @@ First we need to create a context store using createContextReducer().
 
 ```jsx
 // ./AppStore.js
-import { createContextReducer, dispatchLogger } from 'react-context-reducer';
+import { createContextReducer, reduxDevTools } from 'react-context-reducer';
 
 // create your actions.
 export const AppStoreActions = {
@@ -105,7 +104,7 @@ const reducer = (state = 0, action) => {
 export default createContextReducer(
   "AppStore", // store name
   reducer, // reducer
-  [dispatchLogger] // middlewares
+  [reduxDevTools()] // middlewares
 );
 ```
 
@@ -151,7 +150,7 @@ export default AppStore.connect(([state, dispatch]) => ({
 }))(MyComponent);
 ```
 
-Alternatively you can use the `AppStore.use()` hook to also gain access to the stores state and dispatch.
+Alternatively you can use the `AppStore.use(selectors)` hook to also gain access to the stores state and dispatch.
 ```jsx
 // ./MyComponent.js - AppStore.use() hook
 import React from 'react';
@@ -171,7 +170,7 @@ const MyComponent = (props) => {
 export default MyComponent;
 ```
 
-If everything was coded up correctly you should now see two buttons and the state value. Each time a button is pressed you will also see the action being logged to the console because of the `dispatchLogger` middleware.
+If everything was coded up correctly you should now see two buttons and the state value. Each time a button is pressed you will also see the action being logged to the console because of the `reduxDevTools()` middleware.
 
 
 

@@ -1,6 +1,6 @@
 import { warning } from '../utils/logging';
 
-const combineReducers = (actions) => {
+const combineActions = (actions) => {
   const actionKeys = Object.keys(actions);
   const actionCache = {}; // acrtions should be unique
   const finalActions = {};
@@ -32,4 +32,4 @@ const combineReducers = (actions) => {
   return finalActions;
 };
 
-export default combineReducers;
+export default combineActions;

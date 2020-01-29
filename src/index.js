@@ -1,9 +1,11 @@
 export {
   createContextReducer,
   combineReducers,
-  combineActions
+  combineActions,
+  withTypeCheck
 } from './contextReducer';
 
 export {
-  dispatchLogger
+  dispatchLogger,
+  reduxDevTools
 } from './middlewares';
