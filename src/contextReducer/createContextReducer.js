@@ -1,24 +1,38 @@
-import React, { createContext, useReducer, useContext } from 'react';
-import PropTypes from 'prop-types';
+import React, { createContext, useState, useContext } from 'react';
+import propTypes from 'prop-types';
+import { runTypeCheck } from './withTypeCheck';
 import { msg } from '../utils/logging';
-
-import reduxDevToolsMiddleware from './ReduxDevToolsMiddleWare';
 
 const createContextReducer = (contextKey, reducer, middlewares = false) => {
   const Context = createContext();
-  const initialState = reducer(undefined, { type: '@@INIT' }); // returns initialState
   const _private = {
-    state: initialState,
-    dispatch: () => { // overloaded, enhancedDispatch (with middlewares).
-      if (process.env.NODE_ENV !== 'production') {
-        throw new Error(msg(`The contextKey "${contextKey}" has not been provided for consumption. Be sure to wrap your app with the HOC "withContextProviders()(App)" before trying to consume a context.`));
-      }
-    },
-    _dispatch: () => {} // overloaded, raw dispatch (no middlewares).
+    contextKey: contextKey,
+    state: undefined,
+    dispatch: () => {}, // overloaded
+    _dispatch: () => {}, // overloaded
+    wrappedDispatch: (action) => {
+      _private.state = _private.reducer(_private.state, action, contextKey);
+    }, // overloaded
+    reducer: reducer,
+    middlewareAPI: {
+      // experimental Reducer Store API
+      contextKey: contextKey,
+      getState: () => _private.state,
+      dispatch: action => _private.dispatch(action),
+      // used to replace the entire state.
+      dispatchState: newState => { _private.state = newState; _private._dispatch(newState); }
+    }
   };
+
+  // decorate dispatch with middlewares
+  _private.dispatch = composeMiddlewares(_private, middlewares);
+  _private.dispatch({ type: '@@INIT' }); // initialState
+
+  const initialState = _private.state;
   const decoratedContext = {
     contextKey,
     Context,
+    Consumer: Context.Consumer,
     connect: (
       mapContextToProps = () => ({}),
       keys = null, /* array of keys to include */
@@ -63,56 +77,47 @@ const createContextReducer = (contextKey, reducer, middlewares = false) => {
     getState: () => _private.state,
     dispatch: (action) => _private.dispatch(action)
   };
-
-  let enhancedReducer = reducer;
-
-  if (process.env.NODE_ENV !== 'production') {
-    enhancedReducer = reduxDevToolsMiddleware(
-      {
-        getState: decoratedContext.getState,
-        dispatch: (action) => _private._dispatch(action)
-      },
-      reducer,
-      { // reduxDevTools options
-        name: contextKey
-      }
-    );
-  }
-
   decoratedContext.Provider = (props) => { /* Provider HoC */
-    const [state] = useReducerStore(_private, enhancedReducer, initialState, middlewares);
-    const enhancedValue = [state, decoratedContext.dispatch]; /* use the same dispatch function signature */
+    const value = useStoreReducer(_private, decoratedContext.getState());
     return (
-      <Context.Provider value={enhancedValue}>
+      <Context.Provider value={value}>
         {props.children}
       </Context.Provider>
     );
   };
   decoratedContext.Provider.propTypes = {
-    children: PropTypes.any
+    children: propTypes.any
   };
   return decoratedContext;
 };
 
 export default createContextReducer;
 
-const useReducerStore = (_private, reducer, initialState, middlewares) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-  let enhancedDispatch = dispatch;
-  if (middlewares && Array.isArray(middlewares) && middlewares.length) {
-    const middlewareAPI = {
-      getState: () => state,
-      dispatch: action => _private.dispatch(action)
-    };
-    const chain = middlewares.map(middleware => middleware(middlewareAPI));
-    enhancedDispatch = compose(...chain)(dispatch);
-  }
-  // experimental Reducer Store API
+const useStoreReducer = (_private, initialState) => {
+  const [state, setState] = useState(initialState);
   _private.state = state;
-  _private.dispatch = enhancedDispatch;
-  _private._dispatch = dispatch;
-  return [ state, enhancedDispatch ];
+  _private._dispatch = setState;
+  _private.wrappedDispatch = (action) => {
+    // In order to get the next reduced state for middlewares we need to change
+    // when the reducer gets called. Instead of using useReducer() we can just
+    // useState() because we have already calculated the next state by calling
+    // the reducer.
+    _private.state = _private.reducer(_private.state, action, _private.contextKey); // important
+    setState(_private.state);
+    return action; // return the action
+  };
+  return [ state, _private.dispatch ];
+};
+
+const composeMiddlewares = (_private, middlewares) => {
+  if (middlewares && Array.isArray(middlewares) && middlewares.length) {
+    const chain = middlewares.map(middleware => middleware(_private.middlewareAPI));
+    return (action) => {
+      action = runTypeCheck(action);
+      compose(...chain)(_private.wrappedDispatch)(action);
+    };
+  }
+  return _private.wrappedDispatch;
 };
 
 const compose = (...funcs) => x =>

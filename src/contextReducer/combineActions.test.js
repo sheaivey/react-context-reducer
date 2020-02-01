@@ -2,13 +2,12 @@ import combineActions from './combineActions';
 var assert = require('assert');
 
 describe('Testing combineActions', () => {
-  let count, errorMsg;
+  let errorCount, errorMsg;
   const consoleError = console.error;
   before(() => {
     console.error = (val) => {
-      count++;
+      errorCount++;
       errorMsg = val;
-      // consoleError(val);
     };
   });
 
@@ -17,7 +16,7 @@ describe('Testing combineActions', () => {
   });
 
   beforeEach(() => {
-    count = 0;
+    errorCount = 0;
     errorMsg = undefined;
   });
 
@@ -53,7 +52,7 @@ describe('Testing combineActions', () => {
       Loading: 'LOADING'
     };
     combineActions({ actionsA, actionsB });
-    assert.strict.equal(count, 1);
+    assert.strict.equal(errorCount, 1);
     assert.strict.equal(errorMsg, 'react-context-store: The action provided for key "actionsB.Loading" is not unique "LOADING". First seen here "actionsA.Loading" = "LOADING".');
   });
 
@@ -63,7 +62,7 @@ describe('Testing combineActions', () => {
       Loading: 'LOADING'
     };
     combineActions({ actionsA, actionsB });
-    assert.strict.equal(count, 1);
+    assert.strict.equal(errorCount, 1);
     assert.strict.equal(errorMsg, 'react-context-store: No actions provided for key "actionsA"');
   });
 
@@ -73,7 +72,7 @@ describe('Testing combineActions', () => {
       Loading: 'LOADING'
     };
     combineActions({ actionsA, actionsB });
-    assert.strict.equal(count, 1);
+    assert.strict.equal(errorCount, 1);
     assert.strict.equal(errorMsg, 'react-context-store: The action provided for key "actionsA" is not a object.');
   });
 });

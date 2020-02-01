@@ -28,7 +28,7 @@ const combineReducers = (reducers) => {
       const key = finalReducerKeys[i];
       const reducer = finalReducers[key];
       const previousStateForKey = state[key];
-      const nextStateForKey = reducer(previousStateForKey, action);
+      const nextStateForKey = reducer(previousStateForKey, action, key);
       if (process.env.NODE_ENV !== 'production') {
         if (typeof nextStateForKey === 'undefined') {
           throw new Error(msg('reducers should always return a state other then "undefined"'));
