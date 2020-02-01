@@ -1,6 +1,6 @@
 {
   "name": "react-context-reducer",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "React Context + useReducer = Hooks version of Redux. This library is intended to be a light weight stand-in for Redux.js built on top of reacts Hooks API.",
   "main": "index.js",
   "files": [
