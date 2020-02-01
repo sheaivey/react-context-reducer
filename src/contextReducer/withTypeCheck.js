@@ -1,10 +1,11 @@
 import propTypes from 'prop-types';
+import { warning, msg } from '../utils/logging';
 export const TYPE_CHECK_KEY = '_propTypes';
 
 export default (thing, shape = null) => {
   if (process.env.NODE_ENV === 'development') {
     if (shape == null) {
-      throw new Error('react-context-store: withPropTypes() expected non-null shape.');
+      throw new Error(msg('Error withPropTypes() expected non-null shape.'));
     }
     if (typeof thing === 'string') { // action
       const name = new String(thing); // eslint-disable-line no-new-wrappers
@@ -22,7 +23,7 @@ export default (thing, shape = null) => {
         return nextState;
       };
     } else { // unknown
-      console.error('react-context-store: Unknown type passed to withPropTypes(). Expected \'string\' or \'function\'.', thing, shape);
+      warning('Unknown type passed to withPropTypes(). Expected \'string\' or \'function\'.', thing, shape);
     }
   }
   return thing;

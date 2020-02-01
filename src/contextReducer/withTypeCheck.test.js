@@ -5,7 +5,8 @@ var assert = require('assert');
 describe('Testing wityTypeCheck', () => {
   const tempENV = process.env.NODE_ENV;
   const consoleError = console.error;
-  let errorCount = 0; let errorMsg = '';
+  let errorCount = 0;
+  let errorMsg = '';
   before(() => {
     console.error = (val) => {
       errorCount++;

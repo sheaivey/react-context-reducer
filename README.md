@@ -9,14 +9,14 @@ React Context + useReducer = Hooks version of Redux. This library is intended to
 - Simplify reducer complexity with `combineReducers()`.
 - New `combineActions()` validate and consolidate all your actions into one export.
 - Use existing Redux middlewares or create your own.
+  - Take advantage of the included `reduxDevTools()` or `dispatchLogger` middleware.
 - Use a simple `<Provider />` HoC to register the context store with your app.
 - Connect your components to your stores state with `connect()` HoC, `use()` Hook,
 - Use `getState()` or `dispatch()` to interact with your store outside a react component.
 - Create as many stores as you need with `createContextReducer()` or use one super store by combining your reducers.
 - Only render when props change using `React.memo()`.
-- Developer friendly
-  - Fail fast with helpful debugging messages.
-  - Integrated with `ReduxDevTools`.
+- Developer friendly with fail fast helpful debugging messages.
+  - Use `withTypeCheck()` to describe your action and store shape.
 - Lightweight under 5kb in production
 
 ## Installing
@@ -41,10 +41,12 @@ $ npm install prop-types
     ContextKey: ContextKey, /* name of the store. */
     Context, /* React Context Object. */
     Provider, /* The Provider HoC. */
-    use(), /* React Hook to use the store. returns [state, dispatch] */
-    connect(mapContextToProps, watchKeys, options), /* The Connect HoC
+    use(keys), /* React Hook to use the store. returns [state, dispatch]
+    - keys (optional) array of keys to return from the state.
+    */
+    connect(mapContextToProps, keys, options), /* The Connect HoC
     - mapContextToProps(...) function to map context [state, dispatch] to props.
-    - watchKeys (optional) array of keys to return from the state.
+    - keys (optional) array of keys to return from the state.
     - options (optional) object {useMemo = true}
     */
     getState(), /* Returns the current state of the store. */
@@ -53,6 +55,7 @@ $ npm install prop-types
 ```
 - `combineReducers({...})` - Split up complex reducers into smaller chunks. Works exactly like redux implementation [Redux of combineReducers()](https://redux.js.org/recipes/structuring-reducers/using-combinereducers).
 - `combineActions({...})` - Combines actions similar to reducers and validates all your actions for uniqueness. Helps reduce the number of files you need to include in larger apps.
+- `withTypeCheck(actionName or reducer, propTypes schema)` - Define your action payload shape or reducers state shape by wrapping it withTypeCheck.
 
 
 ## Middleware API
@@ -68,8 +71,9 @@ The middleware api sits between every dispatch call to your store. This allows f
       (action) => {
         console.group(`Dispatching "${action.type}"`);
         console.info('Action:', action);
-        console.info('Current State:', store.getState());
-        let result = next(action);
+        console.info('Previous State:', store.getState());
+        const result = next(action);
+        console.info('Next State:', store.getState());
         console.groupEnd();
         return result;
       };
@@ -80,12 +84,13 @@ First we need to create a context store using createContextReducer().
 
 ```jsx
 // ./AppStore.js
-import { createContextReducer, reduxDevTools } from 'react-context-reducer';
+import propTypes from 'prop-types';
+import { createContextReducer, reduxDevTools, withTypeCheck } from 'react-context-reducer';
 
 // create your actions.
 export const AppStoreActions = {
-  Add: '+',
-  Subtract: '-'
+  Add: withTypeCheck('+', propTypes.shape({})),
+  Subtract: withTypeCheck('-', propTypes.shape({}))
 };
 
 // create your reducer.
@@ -103,7 +108,7 @@ const reducer = (state = 0, action) => {
 // Create the context store and export it.
 export default createContextReducer(
   "AppStore", // store name
-  reducer, // reducer
+  withTypeCheck(reducer, propTypes.number.isRequired), // reducer
   [reduxDevTools()] // middlewares
 );
 ```
@@ -171,7 +176,6 @@ export default MyComponent;
 ```
 
 If everything was coded up correctly you should now see two buttons and the state value. Each time a button is pressed you will also see the action being logged to the console because of the `reduxDevTools()` middleware.
-
 
 
 View Examples (Work In Progress)
