@@ -20,7 +20,6 @@ export default (config = { __useInProduction__: false }) => {
   const initExtension = (store) => {
     if (window && window.__REDUX_DEVTOOLS_EXTENSION__) {
       extension = window.__REDUX_DEVTOOLS_EXTENSION__.connect({ ...defaultConfig, name: store.contextKey, ...config });
-      // TODO: figure out how to get initial state here...
       extension.init(store.getState());
       extension.subscribe((message) => {
         if (message.type === 'DISPATCH' && message.payload) {

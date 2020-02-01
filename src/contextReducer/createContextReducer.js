@@ -1,11 +1,10 @@
-import React, { createContext, useReducer, useContext } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 import propTypes from 'prop-types';
 import { runTypeCheck } from './withTypeCheck';
 import { msg } from '../utils/logging';
 
 const createContextReducer = (contextKey, reducer, middlewares = false) => {
   const Context = createContext();
-  // const initialState = reducer(undefined, { type: '@@INIT' }); // returns initialState
   const _private = {
     contextKey: contextKey,
     state: undefined,
@@ -24,6 +23,8 @@ const createContextReducer = (contextKey, reducer, middlewares = false) => {
       dispatchState: newState => { _private.state = newState; _private._dispatch(newState); }
     }
   };
+
+  // decorate dispatch with middlewares
   _private.dispatch = composeMiddlewares(_private, middlewares);
   _private.dispatch({ type: '@@INIT' }); // initialState
 
@@ -77,10 +78,9 @@ const createContextReducer = (contextKey, reducer, middlewares = false) => {
     dispatch: (action) => _private.dispatch(action)
   };
   decoratedContext.Provider = (props) => { /* Provider HoC */
-    const [state] = useReducerStore(_private, () => decoratedContext.getState(), decoratedContext.getState(), middlewares);
-    const enhancedValue = [state, decoratedContext.dispatch]; /* use the same dispatch function signature */
+    const value = useStoreReducer(_private, decoratedContext.getState());
     return (
-      <Context.Provider value={enhancedValue}>
+      <Context.Provider value={value}>
         {props.children}
       </Context.Provider>
     );
@@ -93,17 +93,17 @@ const createContextReducer = (contextKey, reducer, middlewares = false) => {
 
 export default createContextReducer;
 
-const useReducerStore = (_private, reducer, initialState) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+const useStoreReducer = (_private, initialState) => {
+  const [state, setState] = useState(initialState);
   _private.state = state;
-  _private._dispatch = dispatch;
+  _private._dispatch = setState;
   _private.wrappedDispatch = (action) => {
     // In order to get the next reduced state for middlewares we need to change
-    // when the reducer gets called. This is changes the useReducer hook to
-    // just a simple return store.getState() call because we have already calculated the next
-    // state here...
+    // when the reducer gets called. Instead of using useReducer() we can just
+    // useState() because we have already calculated the next state by calling
+    // the reducer.
     _private.state = _private.reducer(_private.state, action, _private.contextKey); // important
-    dispatch(); // simple dispatch see above note.
+    setState(_private.state);
     return action; // return the action
   };
   return [ state, _private.dispatch ];
