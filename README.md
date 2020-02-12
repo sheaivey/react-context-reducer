@@ -89,8 +89,8 @@ import { createContextReducer, reduxDevTools, withTypeCheck } from 'react-contex
 
 // create your actions.
 export const AppStoreActions = {
-  Add: withTypeCheck('+', propTypes.shape({})),
-  Subtract: withTypeCheck('-', propTypes.shape({}))
+  Add: withTypeCheck('+')),
+  Subtract: withTypeCheck('-')
 };
 
 // create your reducer.

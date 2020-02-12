@@ -16,7 +16,9 @@ const combineActions = (actions) => {
       Object.keys(actions[key]).forEach((actionKey) => {
         // make sure all actions are unique
         if (actionCache[actions[key][actionKey]]) {
-          warning(`The action provided for key "${key}.${actionKey}" is not unique "${actions[key][actionKey]}". First seen here "${actionCache[actions[key][actionKey]]}" = "${actions[key][actionKey]}".`);
+          if (process.env.NODE_ENV !== 'production') {
+            warning(`The action provided for key "${key}.${actionKey}" is not unique "${actions[key][actionKey]}". First seen here "${actionCache[actions[key][actionKey]]}" = "${actions[key][actionKey]}".`);
+          }
         } else {
           actionCache[actions[key][actionKey]] = `${key}.${actionKey}`;
         }

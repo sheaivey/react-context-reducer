@@ -2,6 +2,7 @@ import combineActions from './combineActions';
 var assert = require('assert');
 
 describe('Testing combineActions', () => {
+  const tempENV = process.env.NODE_ENV;
   let errorCount, errorMsg;
   const consoleError = console.error;
   before(() => {
@@ -9,10 +10,12 @@ describe('Testing combineActions', () => {
       errorCount++;
       errorMsg = val;
     };
+    process.env.NODE_ENV = 'development';
   });
 
   after(() => {
     console.error = consoleError;
+    process.env.NODE_ENV = tempENV;
   });
 
   beforeEach(() => {

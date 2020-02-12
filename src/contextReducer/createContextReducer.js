@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext } from 'react';
 import propTypes from 'prop-types';
-import { runTypeCheck } from './withTypeCheck';
+import { runActionTypeCheck } from './withTypeCheck';
 import { msg } from '../utils/logging';
 
 const createContextReducer = (contextKey, reducer, middlewares = false) => {
@@ -59,10 +59,10 @@ const createContextReducer = (contextKey, reducer, middlewares = false) => {
       }
       if (keys) {
         const state = value[0];
+        if (typeof state !== 'object') {
+          return value; // can only filter object keys.
+        }
         if (process.env.NODE_ENV !== 'production') {
-          if (typeof state !== 'object') {
-            return value; // can only filter object keys.
-          }
           if (!Array.isArray(keys)) {
             throw new Error(msg(`Keys must be an array.`), state);
           }
@@ -113,7 +113,7 @@ const composeMiddlewares = (_private, middlewares) => {
   if (middlewares && Array.isArray(middlewares) && middlewares.length) {
     const chain = middlewares.map(middleware => middleware(_private.middlewareAPI));
     return (action) => {
-      action = runTypeCheck(action);
+      action = runActionTypeCheck(action);
       compose(...chain)(_private.wrappedDispatch)(action);
     };
   }

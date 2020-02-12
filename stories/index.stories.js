@@ -22,26 +22,26 @@ const dispatchAction = (store) =>
     };
 
 const combinedActions = combineActions({
-  store1: { Increment: 'store1/+', Decrement: 'store1/-', ResetAll: 'reset' },
+  store1: { Increment: withTypeCheck('store1/+'), Decrement: withTypeCheck('store1/-'), ResetAll: 'reset' },
   store2: { Noop: 'store2/noop', ResetAll: 'reset' }
 });
 
 const CombinedReducer = createContextReducer('CombinedReducer',
   withTypeCheck(combineReducers({
     store1: withTypeCheck((state = 0, action) => {
-      if (action.type === 'store1/+') {
+      if (action.type === combinedActions.store1.Increment) {
         return ++state;
       }
-      if (action.type === 'store1/-') {
+      if (action.type === combinedActions.store1.Decrement) {
         return --state;
       }
-      if (action.type === 'reset') {
+      if (action.type === combinedActions.store1.ResetAll) {
         return 0;
       }
       return state;
     }, propTypes.number.isRequired),
     store2: withTypeCheck((state, action) => {
-      if (state === undefined || action.type === 'reset') {
+      if (state === undefined || action.type === combinedActions.store2.ResetAll) {
         return 0;
       }
       return ++state;
